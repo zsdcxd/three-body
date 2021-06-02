@@ -9,7 +9,6 @@ import civipos
 civnum = 10
 starnum = star.starnum
 civiposlist = random.sample(list(range(1, star.starnum + 1)), civnum)
-starlist = star.maplist
 civs = []
 for i in range(civnum):
     civ_i = civilization.civilization(i, civiposlist[i])
@@ -20,7 +19,7 @@ for i in range(civnum):
 hm = pyWinhook.HookManager()
 def onkeyboardevent(event):
 
-    pass
+    return True
 
 hm.KeyDown = onkeyboardevent
 hm.HookKeyboard()
