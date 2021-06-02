@@ -9,4 +9,8 @@ class communication(object):
         pass
 
     def war(self,civ1,civ2):
-        if civ1.state > civ2.state
+        if civ1.state > civ2.state:
+            pass
+        pass
+    pass
+

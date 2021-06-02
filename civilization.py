@@ -2,7 +2,7 @@ import random
 import star
 
 
-class civilization(star):
+class civilization(object):
     def __init__(self, starnum):
         self.live = 1  # 1存活0死亡
         self.state = random.random() / 2  # 科技水平，0为最低1为最高
@@ -18,10 +18,10 @@ class civilization(star):
 
     def population(self):
         self.population = self.population + self.develop
-        if self.population >= 1
+        if self.population >= 1:
             self.population -= 1
             self.immigrate()
-            passs
+            pass
 
         pass
 
@@ -32,6 +32,6 @@ class civilization(star):
 
     def search(self):
         for i in range(max(1,int(self.state*10))):
-            self.sight.append(self.starmap())
+            self.sight.append(star.maplist)
         pass
 
