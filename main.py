@@ -10,6 +10,7 @@ civnum = 10
 starnum = star.starnum
 civiposlist = random.sample(list(range(1, star.starnum + 1)), civnum)
 civs = []
+stafflist = []
 for i in range(civnum):
     civ_i = civilization.civilization(i, civiposlist[i])
     civs.append(civ_i)

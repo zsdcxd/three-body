@@ -1,5 +1,6 @@
 import random
 import star
+import main
 
 
 class civilization(object):
@@ -7,7 +8,7 @@ class civilization(object):
         self.live = 1  # 1存活0死亡
         self.id = civid  # 文明编号
         self.state = random.random() / 2  # 科技水平，0为最低1为最高
-        self.speed = random.random()  # 发展速度，遇到其他文明有可能增大
+        self.speed = random.random() / 20  # 发展速度，遇到其他文明有可能增大
         self.sight = [starnum]  # 观测的星系表
         self.nonesight = list(range(star.maplist))
         self.nonesight.pop(self.id) #没观测的星系表
@@ -24,33 +25,23 @@ class civilization(object):
 
         pass
 
-    # def population(self):
-    #     self.population = self.population + self.develop
-    #     if self.population >= 1:
-    #         self.population -= 1
-    #         self.immigrate()
-    #         pass
-    #
-    #     pass
+    def move(self):
+        for i in range(len(self.staff)):
+            if self.staff[i][2] <= 1 :
+                self.event(self.staff[i][0],self.staff[i][1],self.staff[i][2:-1])
+                self.staff.pop(i)
+            else:
+                self.staff[i][2] -= 1
+                pass
+            pass
+        self.state += self.speed
+        self.search()
+
+
 
     # def immigrate(self):
     #     self.star.append(self.sightwithoutciv[random.randint(0, len(self.sightwithoutciv))])
     #     pass
-
-    def diplomacy(self,target):
-        if self.character == 1:
-            self.staff.append(('attact',target,star.distto(self.id,target),self.state))
-            pass
-        elif self.character == 2:
-            self.communicate(target)
-            pass
-        else:
-            pass
-
-        pass
-
-    def communicate(self,target):
-        pass
 
 
 
@@ -74,16 +65,34 @@ class civilization(object):
             star.maplist[target]['owner']=self.id
             pass
         if event == 'attact':
+            main.stafflist.append(('attact',self.id,target,self.state))
             pass
 
         pass
 
-    def move(self):
-        for i in range(len(self.staff)):
-            if self.staff[i][2] <= 1 :
-                self.event(self.staff[i][0],self.staff[i][1])
-                self.staff.pop(i)
-            else:
-                self.staff[i][2] -= 1
-                pass
+    def diplomacy(self,target):
+        if self.character == 1:
+            self.staff.append(('attact',target,star.distto(self.id,target)))
             pass
+        elif self.character == 2:
+            self.communicate(target)
+            pass
+        else:
+            pass
+
+        pass
+
+    def communicate(self,target):
+        main.stafflist.append('communicate',self.id,target)
+        pass
+
+    def reply(self,target):
+        if self.character == 1:
+            self.staff.append(('attact',target,star.distto(self.id,target)))
+            pass
+        elif self.character == 2:
+            self.communicate(target)
+            pass
+        else:
+            pass
+        pass
