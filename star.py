@@ -45,9 +45,9 @@ def distance(star1, star2):       #获取两个星系的距离
 #         pass
 #     pass
 
-def distto(starid):   #获取各个星系到starid星系的距离，按照距离从小到大排序
+def distto(starid, starlist = starnum):   #获取starlist中各个星系到starid星系的距离，按照距离从小到大排序
     distolist = {}
-    l = list(range(starnum))
+    l = list(range(starlist))
     l.remove(starid)
     for i in l:
         distolist[i]=distance(i,starid)

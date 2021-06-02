@@ -1,3 +1,5 @@
+import pyWinhook
+import pythoncom
 import random
 import civilization
 import communication
@@ -13,3 +15,14 @@ for i in range(civnum):
     civ_i = civilization.civilization(i, civiposlist[i])
     civs.append(civ_i)
     pass
+
+
+hm = pyWinhook.HookManager()
+def onkeyboardevent(event):
+
+    pass
+
+hm.KeyDown = onkeyboardevent
+hm.HookKeyboard()
+pythoncom.PumpMessages()
+
