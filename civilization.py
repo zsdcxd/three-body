@@ -26,16 +26,27 @@ class civilization(object):
         pass
 
     def move(self):
-        for i in range(len(self.staff)):
-            if self.staff[i][2] <= 1 :
-                self.event(self.staff[i][0],self.staff[i][1],self.staff[i][2:-1])
-                self.staff.pop(i)
-            else:
-                self.staff[i][2] -= 1
+        if self.live == 1:
+            for i in range(len(self.staff)):
+                if self.staff[i][2] <= 1 :
+                    self.event(self.staff[i][0],self.staff[i][1],self.staff[i][2:-1])
+                    self.staff.pop(i)
+                else:
+                    self.staff[i][2] -= 1
+                    pass
                 pass
+            self.state += self.speed
+            self.search()
+        else:
+            for i in self.star:
+                star.maplist[i]['owner']=None
+            for i in main.stafflist:
+                if i[2]==self.id:
+                    main.stafflist.remove(i)
+            main.civs.pop(self.id)
             pass
-        self.state += self.speed
-        self.search()
+        pass
+
 
 
 
