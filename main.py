@@ -26,7 +26,7 @@ def event(movement, id_start, id_part, start_state=None):
             civs.pop(id_part)
 
         else:
-            stafflist.append(('attack', id_part, id_start,civs[id_part].state))
+            stafflist.append(['attack', id_part, id_start,civs[id_part].state])
             pass
     elif movement == 'trap' or 'communicate':
         civs[id_part].reply(movement, id_start)
@@ -41,7 +41,7 @@ def event(movement, id_start, id_part, start_state=None):
         pass
 
 def dist(id_start,id_part):
-    return star.distance(random.sample(civs[id_part].star, 1),random.sample(civs[id_start].star, 1))
+    return star.distance((random.sample(civs[id_part].star, 1)[-1]),(random.sample(civs[id_start].star, 1))[-1])
 
 
 for i in range(civnum):
@@ -52,6 +52,7 @@ for i in range(civnum):
 hm = pyWinhook.HookManager()
 
 
+print(civs[1].state, civs[1].sight, civs[1].star, civs[1].staff)
 def onkeyboardevent(event):
     for i in range(civnum):
         civs[i].move()
