@@ -1,5 +1,7 @@
 import random
 import star
+
+
 # from main import stafflist, civnum, dist
 
 
@@ -12,7 +14,7 @@ class civ(object):
         self.speed = random.random() / 20  # 发展速度，遇到其他文明有可能增大
         self.sight = [starnum]  # 观测的星系表
         self.nonesight = list(range(star.starnum))
-        self.nonesight.remove(self.id)  # 没观测的星系表
+        self.nonesight.remove(starnum)  # 没观测的星系表
         self.star = [starnum]  # 占领的星系表
         self.sightwithoutciv = []  # 未占领的无文明星系表
         self.sightwithciv = []  # 观测到有文明星系表
@@ -22,21 +24,23 @@ class civ(object):
         # self.population = 0.2  # 人口，超过1会移民
         # self.develop = 0.1*len(self.star)  # 文明人口增长速度
         self.character = random.randint(1, 3)  # 1为好斗，2为和平，3为静默
-        self.staff = []  # 正在做的事项,格式['动作'，'对象',时间,其他]，如['immigrate','12',10],指正在移民12号星系，将在10百年后完成
+        self.staff = []  # 正在做的事项,格式['动作'，对象,时间,其他]，如['immigrate',12,10],指正在移民12号星系，将在10百年后完成
 
         star.maplist[starnum]['owner'] = self.id
 
         pass
 
     def move(self):
-        from main import stafflist
+        from main import stafflist , civs
         if self.live == 1:
-            for i in range(len(self.staff)):
-                if self.staff[i][2] <= 1:
-                    self.event(self.staff[i][0], self.staff[i][1], self.staff[i][2:-1])
-                    self.staff.pop(i)
+            for i in self.staff:
+                # print(1, self.id, self.staff, i)
+                if i[2] <= 1:
+                    self.event(i[0], i[1], i[2:-1])
+                    self.staff.remove(i)
                 else:
-                    self.staff[i][2] -= 1
+                    # print(2, self.id, self.staff, i)
+                    i[2] -= 1
                     pass
                 pass
             if self.character == 1:
@@ -55,6 +59,13 @@ class civ(object):
             for i in stafflist:
                 if i[2] == self.id:
                     stafflist.remove(i)
+            for i in civs:
+                for star in self.star:
+                    if star in civs[i].sightwithciv:
+                        civs[i].sightwithciv.remove(star)
+                    if star in civs[i].nocommunication:
+                        civs[i].nocommunication.remove(star)
+
             pass
         pass
 
@@ -64,7 +75,7 @@ class civ(object):
 
     def search(self):
         distancelist = star.distto(self.id, self.nonesight)
-        for i in range(max(1, int(self.state * 10))):
+        for i in range(min(max(1, int(self.state * 10)), len(self.nonesight))):
             self.staff.append(['search', distancelist[i][0], distancelist[i][1]])
             self.nonesight.remove(distancelist[i][0])
         pass
@@ -77,8 +88,10 @@ class civ(object):
                 self.sightwithoutciv.append(target)
             else:
                 self.sightwithciv.append(target)
-                self.nocommunication.remove(star.maplist[target]['owner'])
-                self.diplomacy(star.maplist[target]['owner'])
+                print(star.maplist[target]['owner'], self.nocommunication)
+                if star.maplist[target]['owner'] not in self.nocommunication:
+                    self.nocommunication.remove(star.maplist[target]['owner'])
+                    self.diplomacy(star.maplist[target]['owner'])
             pass
         elif event == 'immigrate':
             star.maplist[target]['owner'] = self.id
@@ -109,16 +122,15 @@ class civ(object):
 
     def reply(self, movement, target):
         from main import stafflist
-        self.nonesight.remove(target)
         if self.character == 2:
             if movement == 'communicate':
+                if target in self.nonesight:
+                    self.nonesight.remove(target)
                 stafflist.append(('re_communicate', self.id, target))
             elif movement == 'trap':
                 stafflist.append(('re_trap', self.id, target))
                 pass
             pass
         pass
-
-
 
     pass
