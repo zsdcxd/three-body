@@ -20,6 +20,7 @@ class civ(object):
         self.stars_with_civ = []  # 观测到有其他文明星系表
         self.civ_without_communication = list(range(civnum))
         self.civ_without_communication.remove(self.id)  # 未接触的文明
+        self.civ_trap_target = self.civ_without_communication
         self.civ_with_communication = []  # 建立友好交流的文明
         # self.population = 0.2  # 人口，超过1会移民
         # self.develop = 0.1*len(self.star)  # 文明人口增长速度
@@ -61,8 +62,13 @@ class civ(object):
                     stars.maplist[star]['owner'] = None
                     if star in civs[i].stars_with_civ:
                         civs[i].stars_with_civ.remove(star)
+                    for civ_staff in civs[i].staff:
+                        if civ_staff[1] == star:
+                            civs[i].staff.remove(civ_staff)
                 if self.id in civs[i].civ_without_communication:
                     civs[i].civ_without_communication.remove(self.id)
+                if self.id in civs[i].civ_trap_target:
+                    civs[i].civ_trap_target.remove(self.id)
                 if self.id in civs[i].civ_with_communication:
                     civs[i].civ_with_communication.remove(self.id)
             for i in stafflist:
@@ -88,10 +94,13 @@ class civ(object):
     pass
 
     def trap(self):
-        if self.civ_without_communication:
+        if self.civ_trap_target:
             from main import dist, civiposlist
-            target = random.sample(self.civ_without_communication, 1)[-1]
-            self.staff.append(['trap', civiposlist[target], dist(self.id, target)])
+            from main import civs
+            target_id = random.sample(self.civ_trap_target, 1)[-1]
+            self.staff.append(['trap', civiposlist[target_id], dist(self.id, target_id)])
+            self.civ_trap_target.remove(target_id)
+            # print('self:', self.id, 'target_id:', target_id, 'civ_without_communication:', self.civ_without_communication, civs.keys())
 
     pass
 
@@ -103,8 +112,9 @@ class civ(object):
                 stafflist.append(('re_communicate', self.id, target_id))
             elif movement == 'trap':
                 times = 0
+                print('re_trap', self.stars_with_civ, civs[target_id].stars_landed)
                 for star in civs[target_id].stars_landed:
-                    if star in self.stars_not_seen:
+                    if star in self.stars_with_civ:
                         times += 1
                 pass
                 if times == 0:
@@ -127,6 +137,8 @@ class civ(object):
                 if stars.maplist[target_pos]['owner'] in self.civ_without_communication:
                     self.civ_without_communication.remove(stars.maplist[target_pos]['owner'])
                     self.stars_with_civ.append(stars.maplist[target_pos]['owner'])
+                if stars.maplist[target_pos]['owner'] in self.civ_trap_target:
+                    self.civ_trap_target.remove(stars.maplist[target_pos]['owner'])
                     if self.character == 1:
                         self.staff.append(['attack', target_pos, stars.distance(self.id, target_pos)])
                         pass

@@ -1,14 +1,14 @@
 import random
 
-mapx = 100  # 地图宽度(百光年)
-mapy = 100  # 地图长度(百光年)
-density = 10  # 密度，平均星球间隔距离(百光年)
+mapx = 50  # 地图宽度(百光年)
+mapy = 50  # 地图长度(百光年)
+density = 2  # 密度，平均星球间隔距离(百光年)
 starnum = int(mapx * mapy / (density * density))
 
 
 def pos():
-    posx = random.randint(0, mapx)
-    posy = random.randint(0, mapy)
+    posx = random.randint(-mapx, mapx)
+    posy = random.randint(-mapy, mapy)
     return posx, posy
 
 

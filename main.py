@@ -1,9 +1,6 @@
-import pyWinhook
-import pythoncom
 import random
 import civilization
 import star
-import os
 
 civnum = 10
 starnum = star.starnum
@@ -13,16 +10,20 @@ stafflist = []  # ('attack',self_id,target_id,self.state)
 
 
 def move():
+    print('move')
     for staff in stafflist:
-        if i in stafflist:
+        if staff in stafflist:
+            print('staff:', staff)
             stafflist.remove(staff)
             event(staff[0], staff[1], staff[2], staff[3:])
 
 
 def event(movement, id_start, id_part, start_state=None):
-    print(movement, id_start, id_part, start_state, civs)
+    print('event:', (movement, id_start, id_part, start_state, civs.keys()))
     if movement == 'attack':
+        # print('attack')
         if start_state[0] > 0.7 * civs[id_part].state:
+            # print('attack_success')
             civs[id_part].live = 0
             civs[id_part].move()
             civs.pop(id_part)
@@ -32,11 +33,12 @@ def event(movement, id_start, id_part, start_state=None):
     elif movement == 'trap' or 'communicate':
         civs[id_part].reply(movement, id_start)
     elif movement == 're_trap':
+        print('re_trapped')
         for stars in civs[id_start].stars_landed:
             civs[id_part].stars_not_seen.remove(stars)
-        pass
-        civs[id_part].staff.append(['attack', star.maplist[id_start]['pos'],
-                                    star.distance(id_part, star.maplist[id_start]['pos'])])
+
+        civs[id_part].staff.append(['attack', civiposlist[id_start],
+                                    star.distance(id_part, civiposlist[id_start])])
     elif movement == 're_communicate':
         civs[id_start].speed += civs[id_part].speed / 40
         civs[id_part].speed += civs[id_start].speed / 40
@@ -49,6 +51,8 @@ def event(movement, id_start, id_part, start_state=None):
         for stars in civs[id_part].stars_landed:
             civs[id_start].stars_not_seen.remove(stars)
 
+    else:
+        print('movement_ERROR:',movement)
         pass
 
 
@@ -61,25 +65,3 @@ for i in range(civnum):
     civ_i = civilization.civ(i, civiposlist[i])
     civs.update({i: civ_i})
     pass
-
-year = 0
-
-# print('year=', 0, civs[1].state, civs[1].stars_in_sight, civs[1].stars_landed, civs[1].staff)
-hm = pyWinhook.HookManager()
-
-
-def onkeyboardevent(event):
-    global year
-    year += 1
-    for i in civs:
-        civs[i].move()
-    move()
-    # print('year=', year, civs[1].state, civs[1].stars_in_sight, civs[1].stars_landed, civs[1].staff)
-    print(year)
-
-    return True
-
-
-hm.KeyDown = onkeyboardevent
-hm.HookKeyboard()
-pythoncom.PumpMessages()
